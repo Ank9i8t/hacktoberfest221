@@ -1,1 +1,1 @@
-print("hactoberfest2022")
+print("hactoberfest-2022")
