@@ -9,7 +9,7 @@ score = 0
 high_score = 0
 
 # Set up the Screen 
-wn = turtle.Screen()
+wn = turtle.Screen() # its the instance of the Screen that a turtle instance exists on.
 wn.title("Snake Game By Sachin")
 wn.bgcolor("teal")
 wn.setup(width=600,height=600)
@@ -32,11 +32,12 @@ Food.color("red")
 Food.penup()
 Food.goto(0,100)
 
+mode = -1
 
 segments = []
 
 
-#pen
+#pen - the pen thats draw in the screen like a 'turtle walk'
 pen = turtle.Turtle()
 pen.speed(0)
 pen.shape("square")
@@ -44,13 +45,13 @@ pen.color("white")
 pen.penup()
 pen.hideturtle()
 pen.goto(0,220)
-pen.write("Score: 0 High Score: 0",align="center",font=("Courier",24,"normal"))
+pen.write("Score: 0 High Score: 0 ",align="center",font=("Courier",24,"normal"))
 pen.goto(0,200)
-pen.write("Press: 'W' for up, 'S' for Down, 'A' for left, 'D' for Right",align="center",font=("Courier",10,"normal"))
+pen.write("Press: '1' Sachin Mode(Author), '2' Hard Mode",align="center",font=("Courier",10,"normal"))
 
-# Functions 
+# Move Functions 
 def go_up():
-	if head.direction != "down":
+	if head.direction != "down": 
 		head.direction = "up"
 def go_down():
 	if head.direction != "up":
@@ -61,7 +62,6 @@ def go_left():
 def go_right():
 	if head.direction != "left":
 		head.direction = "right"
-
 
 def move():
 	if head.direction == "up":
@@ -79,17 +79,42 @@ def move():
 	if head.direction == "right":
 		x = head.xcor()
 		head.setx(x + 20)
+        
+def fm(): 
+    # Keyboard Bidings
+    wn.listen()
+    wn.onkeypress(go_up,"w")
+    wn.onkeypress(go_down,"s")
+    wn.onkeypress(go_left,"a")
+    wn.onkeypress(go_right,"d")
 
-# Keyboard Bidings
+# Display Function
+def dspl():
+    pen.write("Press: 'W' for up, 'S' for Down, 'A' for left, 'D' for Right ",align="center",font=("Courier",10,"normal"))
+    pen.write("Score: 0 High Score: 0 \n",align="center",font=("Courier",24,"normal"))
+
+# Mode Functions
+def Sachin_mode():
+    globals()['mode'] = 1
+    pen.clear()
+    wn.update()
+    dspl()
+    fm()
+
+def hard():
+    globals()['mode'] = 2
+    pen.clear()
+    wn.update()
+    dspl()
+    fm()
+
 wn.listen()
-wn.onkeypress(go_up,"w")
-wn.onkeypress(go_down,"s")
-wn.onkeypress(go_left,"a")
-wn.onkeypress(go_right,"d")
+wn.onkeypress(Sachin_mode,"1")
+wn.onkeypress(hard,"2")
 
 # Main game loop
 while True:
-	wn.update()
+	wn.update() 
 	# Check for the collision with the border
 	if head.xcor()>290 or head.xcor()<-290 or head.ycor()>290 or head.ycor()<-290:
 		time.sleep(1)
@@ -107,13 +132,13 @@ while True:
 		score = 0
 
 		#Resert the delay
-		delay = 0.1
+		delay = 0.1 
 
 		#Update the score display
 		pen.clear()
-		pen.write("Score: {} High Score: {}".format(score,high_score),align="center",font=("Courier",24,"normal"))
-
-    # Check for the collision of food
+		pen.write("Score: {} High Score: {} \n".format(score,high_score),align="center",font=("Courier",24,"normal"))
+    
+	# Check for the collision of food
 	if head.distance(Food) < 20:
 		# Move the food to a random spot
 		x = random.randint(-290,290)
@@ -125,19 +150,25 @@ while True:
 		new_segment.speed(0)
 		new_segment.shape("square")
 		new_segment.color("yellow")
+
 		new_segment.penup()
-		segments.append(new_segment)
-
-		# Shorten the delay
-		delay -= 0.001
-
+		segments.append(new_segment)		
+		
+        
 		#Increase the score
-		score += 10
+		print(mode)
+		if mode is 1:
+			delay -= 0.001		
+			score += 10
+		elif mode is 2:
+			delay -= 0.01
+			score += 15
 
 		if score > high_score:
 			high_score = score
 
 		pen.clear()
+
 		pen.write("Score: {} High Score: {}".format(score,high_score),align="center",font=("Courier",24,"normal"))
 
 	#Move the end segments first in reverse order
@@ -181,8 +212,5 @@ while True:
 
 
 	time.sleep(delay)
-
-
-
 
 wn.mainloop()
